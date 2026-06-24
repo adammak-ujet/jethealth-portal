@@ -6,7 +6,7 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
 export default defineConfig(() => {
   return {
-    base: './',
+    base: process.env.NODE_ENV === 'production' ? '/jethealth-webpage/' : './',
     plugins: [react(), tailwindcss(), cssInjectedByJsPlugin()],
     resolve: {
       alias: {
