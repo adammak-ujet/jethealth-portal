@@ -7,6 +7,21 @@ import { Patient, Appointment, Prescription, Claim } from './types';
 export default function App() {
   const [role, setRole] = useState<'public' | 'member' | 'provider'>('public');
 
+  // Force scroll to top on initial page load, overriding any hash anchors or browser scroll restoration
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+      
+      const timer = setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // Pre-populated medical database matching collateral exactly
   const [patients, setPatients] = useState<Patient[]>([
     {
@@ -215,6 +230,7 @@ export default function App() {
           onAddAppointment={handleAddAppointment}
           onAddClaim={handleAddClaim}
           onNavigateToProvider={() => setRole('provider')}
+          onNavigateToHome={() => setRole('public')}
         />
       )}
 
@@ -229,6 +245,7 @@ export default function App() {
           onAddPrescription={handleAddPrescription}
           onAddAppointment={handleAddAppointment}
           onNavigateToMember={() => setRole('member')}
+          onNavigateToHome={() => setRole('public')}
         />
       )}
     </div>

@@ -20,6 +20,7 @@ interface ProviderPortalProps {
   onAddPrescription: (rx: Prescription) => void;
   onAddAppointment: (apt: Appointment) => void;
   onNavigateToMember: () => void;
+  onNavigateToHome: () => void;
 }
 
 export default function ProviderPortal({
@@ -31,7 +32,8 @@ export default function ProviderPortal({
   onUpdatePatientNotes,
   onAddPrescription,
   onAddAppointment,
-  onNavigateToMember
+  onNavigateToMember,
+  onNavigateToHome
 }: ProviderPortalProps) {
   // Navigation tabs matching collateral
   const [activeTab, setActiveTab] = useState<'home' | 'patients' | 'schedule' | 'support' | 'prescriptions' | 'performance'>('home');
@@ -192,7 +194,22 @@ export default function ProviderPortal({
 
       {/* Portal Header */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm px-4 py-3 md:px-8 flex items-center justify-between">
-        <Logo size="md" />
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onNavigateToHome}
+            className="cursor-pointer hover:opacity-90 transition-opacity"
+            title="Go to Home"
+          >
+            <Logo size="md" />
+          </button>
+          <button 
+            onClick={onNavigateToHome}
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-jetblue-500 hover:border-jetblue-300 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-1.5 transition-all cursor-pointer"
+          >
+            <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />
+            <span>Home</span>
+          </button>
+        </div>
         
         {/* Role Badge */}
         <div className="flex items-center gap-3">

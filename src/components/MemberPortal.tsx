@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   FileText, ShieldCheck, Search, Calendar, Heart, MessageSquare, 
-  Sparkles, Download, CheckCircle, Clock, PlusCircle, ArrowRight, MapPin, Phone
+  Sparkles, Download, CheckCircle, Clock, PlusCircle, ArrowRight, MapPin, Phone,
+  Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
@@ -16,6 +17,7 @@ interface MemberPortalProps {
   onAddAppointment: (appointment: Appointment) => void;
   onAddClaim: (claim: Claim) => void;
   onNavigateToProvider: () => void;
+  onNavigateToHome: () => void;
 }
 
 export default function MemberPortal({
@@ -24,7 +26,8 @@ export default function MemberPortal({
   claims,
   onAddAppointment,
   onAddClaim,
-  onNavigateToProvider
+  onNavigateToProvider,
+  onNavigateToHome
 }: MemberPortalProps) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'coverage' | 'doctors' | 'chat'>('dashboard');
   
@@ -146,7 +149,22 @@ export default function MemberPortal({
 
       {/* Main Navigation Header */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm px-4 py-3 md:px-8 flex items-center justify-between">
-        <Logo size="md" />
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onNavigateToHome}
+            className="cursor-pointer hover:opacity-90 transition-opacity"
+            title="Go to Home"
+          >
+            <Logo size="md" />
+          </button>
+          <button 
+            onClick={onNavigateToHome}
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-jetblue-500 hover:border-jetblue-300 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-1.5 transition-all cursor-pointer"
+          >
+            <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />
+            <span>Home</span>
+          </button>
+        </div>
         
         {/* Role Badge */}
         <div className="flex items-center gap-3">
@@ -330,9 +348,9 @@ export default function MemberPortal({
                   </div>
 
                   <div className="space-y-3">
-                    {claims.map((claim) => (
+                    {claims.map((claim, idx) => (
                       <div 
-                        key={claim.id} 
+                        key={`${claim.id}-${claim.enrollmentItem}-${idx}`} 
                         className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between hover:border-slate-200 transition-colors"
                       >
                         <div className="space-y-1">
