@@ -31,6 +31,34 @@ export default function MemberPortal({
 }: MemberPortalProps) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'coverage' | 'doctors' | 'chat'>('dashboard');
   
+  // Ref and state for Exporting JHEA-001 as PNG
+  const formRef = React.useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPng = async () => {
+    if (!formRef.current) return;
+    setIsExporting(true);
+    try {
+      const { toPng } = await import('html-to-image');
+      const dataUrl = await toPng(formRef.current, {
+        cacheBust: true,
+        backgroundColor: '#ffffff',
+        style: {
+          transform: 'scale(1)',
+        }
+      });
+      const link = document.createElement('a');
+      link.download = 'jhea001-enrollment-form.png';
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Error exporting JHEA-001 as PNG:', error);
+      alert('Failed to export JHEA-001 as PNG. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   // New appointment form state
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<{name: string, specialty: string} | null>(null);
@@ -453,8 +481,24 @@ export default function MemberPortal({
                   </h3>
                   <p className="text-xs text-slate-500">Official JetHealth subscriber enrollment application & coverage summary.</p>
                 </div>
-                
-                <div className="flex gap-2 w-full sm:w-auto">
+                 <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  <button 
+                    onClick={handleExportPng}
+                    disabled={isExporting}
+                    className="flex-1 sm:flex-none border border-emerald-200 hover:border-emerald-300 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-700 font-bold text-xs px-4 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                  >
+                    {isExporting ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-emerald-700 rounded-full animate-spin" />
+                        <span>Exporting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-4 h-4 text-emerald-600" />
+                        <span>Export PNG</span>
+                      </>
+                    )}
+                  </button>
                   <button 
                     onClick={() => {
                       alert("Downloading PDF of JHEA-001 Enrollment form... Your digital record has been archived locally.");
@@ -473,7 +517,7 @@ export default function MemberPortal({
               </div>
 
               {/* JETHEALTH ENROLLMENT APPLICATION FORM CONTAINER (Matches Collateral) */}
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-md p-6 md:p-10 max-w-4xl mx-auto font-sans relative overflow-hidden text-slate-800">
+              <div ref={formRef} className="bg-white border border-slate-200 rounded-2xl shadow-md p-6 md:p-10 max-w-4xl mx-auto font-sans relative overflow-hidden text-slate-800">
                 {/* Confidential Stamp */}
                 <div className="absolute top-10 right-10 border-4 border-dashed border-red-500/20 text-red-500/30 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-lg transform rotate-12 select-none pointer-events-none">
                   Confidential
